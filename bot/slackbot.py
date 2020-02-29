@@ -10,4 +10,14 @@ class SlackBot:
             channel=channel,
             text=message)
         assert response["ok"]
-        assert response["message"]["text"] == message
+
+    def post_attachment_message(self, channel, blocks, attachments):
+        response = self.client.api_call(
+            'chat.postMessage',
+            json=dict(
+                channel=channel,
+                blocks=blocks,
+                attachments=attachments
+            )
+        )
+        assert response["ok"]
