@@ -23,9 +23,10 @@ class SlackBlockBuilder:
         return self
 
     def add_context(self, text):
+        elements = SlackElementsBuilder().add_text(text).build()
         self.__block.append(dict(
             type="context",
-            elements=dict(type="mrkdwn", text=text)
+            elements=elements
         ))
         return self
 
@@ -49,6 +50,15 @@ class SlackBlockBuilder:
 class SlackElementsBuilder:
     def __init__(self):
         self.__elements = []
+
+    def add_text(self, text):
+        self.__elements.append(
+            dict(
+                type="mrkdwn",
+                text=text
+            )
+        )
+        return self
 
     def add_conversation_select(self, text):
         self.__elements.append(

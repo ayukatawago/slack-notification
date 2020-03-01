@@ -24,7 +24,6 @@ class TrelloWrapper:
             return None
         cards = list()
         for _list in list_lists:
-            print(_list.name)
             cards.extend(_list.list_cards('open'))
         return cards
 
@@ -37,6 +36,6 @@ class TrelloWrapper:
         cards = list()
         for _card in card_lists:
             if _card.due_date is not '':
-                if _card.due_date.astimezone().date() <= today.date():
+                if _card.due_date.astimezone().date() <= today.date() and not _card.is_due_complete:
                     cards.append(_card)
         return cards
