@@ -8,7 +8,7 @@ class SlackBlockBuilder:
             text=dict(type="mrkdwn", text=title)
         )
         if accessory is not None:
-            section.update(accesory=accessory)
+            section.update(accessory)
         self.__block.append(section)
         return self
 
