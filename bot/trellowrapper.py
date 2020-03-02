@@ -35,7 +35,8 @@ class TrelloWrapper:
 
         cards = list()
         for _card in card_lists:
-            if _card.due_date is not '':
-                if _card.due_date.date() <= today.date() and not _card.is_due_complete:
-                    cards.append(_card)
+            if (_card.due_date != ''
+                    and _card.due_date.date() <= today.date()
+                    and not _card.is_due_complete):
+                cards.append(_card)
         return cards

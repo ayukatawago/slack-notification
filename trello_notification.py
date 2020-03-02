@@ -6,7 +6,10 @@ import config
 
 
 def create_trello_block():
-    return SlackBlockBuilder().add_section("*Today's task*").add_divider().build()
+    block = SlackBlockBuilder()
+    block.add_section("*Today's task*")
+    block.add_divider()
+    return block.build()
 
 
 def create_trello_attachments(cards):
@@ -16,12 +19,16 @@ def create_trello_attachments(cards):
         list_name = card.get_list().name
         task_name = "`{}` {}".format(list_name, card.name)
         due_date = card.due_date.strftime("%Y/%m/%d")
-        item = SlackBlockBuilder().add_section(task_name).add_context(due_date).build()
+
+        item = SlackBlockBuilder()
+        item.add_section(task_name)
+        item.add_context(due_date)
+
         if card.due_date.astimezone().date() < today.date():
             color = "#ff9900"
         else:
             color = "#00c300"
-        builder.add_item(item, color)
+        builder.add_item(item.build(), color)
     return builder.build()
 
 
