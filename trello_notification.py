@@ -1,7 +1,7 @@
+from datetime import datetime
 from bot.trellowrapper import TrelloWrapper
 from bot.slackbot import SlackBot
 from slackutil.slackbuilder import SlackBlockBuilder, SlackAttachmentBuilder
-from datetime import datetime
 import config
 
 
@@ -20,8 +20,14 @@ def create_trello_attachments(cards):
         task_name = "`{}` {}".format(list_name, card.name)
         due_date = card.due_date.strftime("%Y/%m/%d")
 
+        accessory = dict(accessory=dict(type="button",
+                                        text=dict(type="plain_text",
+                                                  text="complete",
+                                                  emoji=True),
+                                        value=card.id
+                                        ))
         item = SlackBlockBuilder()
-        item.add_section(task_name)
+        item.add_section(task_name, accessory)
         item.add_context(due_date)
 
         if card.due_date.astimezone().date() < today.date():
