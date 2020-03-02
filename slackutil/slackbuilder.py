@@ -91,12 +91,10 @@ class SlackElementsBuilder:
         options = []
         for item in items:
             options.append(
-                {
-                    dict(
-                        text=dict(type="plain_text", text=item.name, emoji=True),
-                        value=item.value
-                    )
-                }
+                dict(
+                    text=dict(type="plain_text", text=item.name, emoji=True),
+                    value=item.value
+                )
             )
         self.__elements.append(
             dict(
