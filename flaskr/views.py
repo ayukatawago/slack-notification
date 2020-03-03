@@ -1,12 +1,11 @@
 import json
+from flask import request, make_response
 import config
-from flask import Flask, request, make_response
-from bot.slackbot import SlackBot
-
-app = Flask(__name__)
+from flaskr import app
+from slackutil.slackbot import SlackBot
 
 
-@app.route('/')
+@app.route("/")
 def show_entries():
     message = 'Hello, World!'
     return message
@@ -22,6 +21,6 @@ def json_html():
     val = form_json["actions"][0]["value"]
 
     message = "complete card_id:" + val
-    response = slack_client.post_message("#todo", message)
+    slack_client.post_message("#todo", message)
 
     return make_response("", 200)
