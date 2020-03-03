@@ -1,6 +1,6 @@
 from datetime import datetime
-from bot.trellowrapper import TrelloWrapper
-from bot.slackbot import SlackBot
+from trelloutil.trellowrapper import TrelloWrapper
+from slackutil.slackbot import SlackBot
 from slackutil.slackbuilder import SlackBlockBuilder, SlackAttachmentBuilder
 import config
 
