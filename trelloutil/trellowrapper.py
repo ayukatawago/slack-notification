@@ -12,24 +12,21 @@ class TrelloWrapper:
                 return _board
         return None
 
-    def get_lists(self, board_name):
-        board = self.get_board(board_name)
+    def get_lists(self, board_id):
+        board = self.client.get_board(board_id)
         if board is None:
             return None
         return board.list_lists('open')
 
-    def get_cards(self, board_name):
-        list_lists = self.get_lists(board_name)
-        if list_lists is None:
+    def get_open_cards(self, list_id):
+        target_list = self.client.get_list(list_id)
+        if target_list is None:
             return None
-        cards = list()
-        for _list in list_lists:
-            cards.extend(_list.list_cards('open'))
-        return cards
+        return target_list.list_cards("open")
 
-    def get_todo_cards(self, board_name):
+    def get_todo_cards(self, list_id):
         today = datetime.now()
-        card_lists = self.get_cards(board_name)
+        card_lists = self.get_open_cards(list_id)
         if card_lists is None:
             return None
 

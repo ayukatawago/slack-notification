@@ -5,9 +5,12 @@ from slackutil.slackbuilder import SlackBlockBuilder, SlackAttachmentBuilder
 import config
 
 
-def create_trello_block():
+slack = SlackBot(config.slack_api_token)
+
+
+def create_trello_block(list_name):
     block = SlackBlockBuilder()
-    block.add_section("*Today's task*")
+    block.add_section("*Today's task in `{}`*".format(list_name))
     block.add_divider()
     return block.build()
 
@@ -38,21 +41,25 @@ def create_trello_attachments(cards):
     return builder.build()
 
 
-def main():
+def notify_trello_tasks():
     # get cards from Trello
     trello = TrelloWrapper(config.trello_api_key, config.trello_token)
-    cards = trello.get_todo_cards('TODO')
+    trello_board = trello.get_board(config.trello_board)
+    trello_lists = trello.get_lists(trello_board.id)
+    for trello_list in trello_lists:
+        trello_cards = trello.get_todo_cards(trello_list.id)
+        if len(trello_cards) == 0:
+            continue
 
-    # notify to slack
-    slack = SlackBot(config.slack_api_token)
-    blocks = create_trello_block()
-    attachments = create_trello_attachments(cards)
-    slack.post_attachment_message(
-        channel='#todo',
-        blocks=blocks,
-        attachments=attachments
-    )
+        # notify to slack
+        blocks = create_trello_block(trello_list.name)
+        attachments = create_trello_attachments(trello_cards)
+        slack.post_attachment_message(
+            channel=config.slack_channel,
+            blocks=blocks,
+            attachments=attachments
+        )
 
 
 if __name__ == '__main__':
-    main()
+    notify_trello_tasks()
