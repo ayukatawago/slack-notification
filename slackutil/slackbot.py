@@ -21,3 +21,15 @@ class SlackBot:
             )
         )
         assert response["ok"]
+
+    def update_message(self, channel, ts, blocks, attachments):
+        response = self.client.api_call(
+            'chat.update',
+            json=dict(
+                channel=channel,
+                ts=ts,
+                blocks=blocks,
+                attachments=attachments
+            )
+        )
+        assert response["ok"]
