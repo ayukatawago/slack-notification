@@ -37,3 +37,7 @@ class TrelloWrapper:
                     and not _card.is_due_complete):
                 cards.append(_card)
         return cards
+
+    def complete_card(self, card_id):
+        card = self.client.get_card(card_id)
+        card.set_due_complete()
