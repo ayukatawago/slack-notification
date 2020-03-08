@@ -1,18 +1,18 @@
 from slack import WebClient
 
 
-class SlackBot:
+class SlackApiWrapper(WebClient):
     def __init__(self, api_token):
-        self.client = WebClient(api_token)
+        super().__init__(api_token)
 
     def post_message(self, channel, message):
-        response = self.client.chat_postMessage(
+        response = self.chat_postMessage(
             channel=channel,
             text=message)
         assert response["ok"]
 
     def post_attachment_message(self, channel, blocks, attachments):
-        response = self.client.api_call(
+        response = self.api_call(
             'chat.postMessage',
             json=dict(
                 channel=channel,
@@ -23,7 +23,7 @@ class SlackBot:
         assert response["ok"]
 
     def update_message(self, channel, ts, blocks, attachments):
-        response = self.client.api_call(
+        response = self.api_call(
             'chat.update',
             json=dict(
                 channel=channel,

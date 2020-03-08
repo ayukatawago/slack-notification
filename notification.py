@@ -1,11 +1,10 @@
 from datetime import datetime
-from trelloutil.trellowrapper import TrelloWrapper
-from slackutil.slackbot import SlackBot
+from trelloutil.trellowrapper import TrelloApiWrapper
+from slackutil.slackwrapper import SlackApiWrapper
 from slackutil.slackbuilder import SlackBlockBuilder, SlackAttachmentBuilder
 import config
 
-
-slack = SlackBot(config.slack_api_token)
+slack = SlackApiWrapper(config.slack_api_token)
 
 
 def create_trello_block(list_name):
@@ -21,7 +20,7 @@ def create_trello_attachments(cards):
     for card in cards:
         list_name = card.get_list().name
         task_name = "`{}` {}".format(list_name, card.name)
-        due_date = card.due_date.strftime("%Y/%m/%d")
+        due_date = card.due_date.astimezone().strftime("%Y/%m/%d")
 
         accessory = dict(accessory=dict(type="button",
                                         text=dict(type="plain_text",
@@ -41,13 +40,28 @@ def create_trello_attachments(cards):
     return builder.build()
 
 
+def get_todo_cards(trello_list):
+    today = datetime.now()
+    trello_cards = list()
+    open_cards = trello_list.list_cards("open")
+    if len(open_cards) == 0:
+        return trello_cards
+
+    for card in open_cards:
+        if (card.due_date != ''
+                and card.due_date.date() <= today.date()
+                and not card.is_due_complete):
+            trello_cards.append(card)
+    return trello_cards
+
+
 def notify_trello_tasks():
     # get cards from Trello
-    trello = TrelloWrapper(config.trello_api_key, config.trello_token)
+    trello = TrelloApiWrapper(config.trello_api_key, config.trello_token)
     trello_board = trello.get_board(config.trello_board)
-    trello_lists = trello.get_lists(trello_board.id)
-    for trello_list in trello_lists:
-        trello_cards = trello.get_todo_cards(trello_list.id)
+    open_lists = trello_board.list_lists("open")
+    for trello_list in open_lists:
+        trello_cards = get_todo_cards(trello_list)
         if len(trello_cards) == 0:
             continue
 

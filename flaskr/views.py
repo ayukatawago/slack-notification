@@ -2,8 +2,8 @@ import json
 from flask import request, make_response
 import config
 from flaskr import app
-from slackutil.slackbot import SlackBot
-from trelloutil.trellowrapper import TrelloWrapper
+from slackutil.slackwrapper import SlackApiWrapper
+from trelloutil.trellowrapper import TrelloApiWrapper
 
 
 @app.route("/")
@@ -14,8 +14,8 @@ def show_entries():
 
 @app.route("/slack/json_html", methods=["POST"])
 def json_html():
-    slack_client = SlackBot(config.slack_api_token)
-    trello_client = TrelloWrapper(config.trello_api_key, config.trello_token)
+    slack_client = SlackApiWrapper(config.slack_api_token)
+    trello_client = TrelloApiWrapper(config.trello_api_key, config.trello_token)
 
     # Parse the request payload
     form_json = json.loads(request.form["payload"])
