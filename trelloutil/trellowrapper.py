@@ -5,7 +5,7 @@ class TrelloApiWrapper(TrelloClient):
     def __init__(self, api_key, token):
         super().__init__(api_key, token)
 
-    def get_board(self, board_name):
+    def get_board_by_name(self, board_name):
         for _board in self.list_boards():
             if _board.name == board_name:
                 return _board
