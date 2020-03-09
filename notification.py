@@ -58,7 +58,7 @@ def get_todo_cards(trello_list):
 def notify_trello_tasks():
     # get cards from Trello
     trello = TrelloApiWrapper(config.trello_api_key, config.trello_token)
-    trello_board = trello.get_board(config.trello_board)
+    trello_board = trello.get_board_by_name(config.trello_board)
     open_lists = trello_board.list_lists("open")
     for trello_list in open_lists:
         trello_cards = get_todo_cards(trello_list)
