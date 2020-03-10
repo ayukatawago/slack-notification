@@ -1,7 +1,7 @@
 from datetime import datetime
 from trelloutil.trellowrapper import TrelloApiWrapper
 from slackutil.slackwrapper import SlackApiWrapper
-from slackutil.slackbuilder import SlackBlockBuilder, SlackAttachmentBuilder
+from slackutil.slackbuilder import SlackBlockBuilder, SlackAttachmentBuilder, SlackElementsBuilder
 import config
 
 slack = SlackApiWrapper(config.slack_api_token)
@@ -22,15 +22,14 @@ def create_trello_attachments(cards):
         task_name = "`{}` {}".format(list_name, card.name)
         due_date = card.due_date.astimezone().strftime("%Y/%m/%d")
 
-        accessory = dict(accessory=dict(type="button",
-                                        text=dict(type="plain_text",
-                                                  text="complete",
-                                                  emoji=True),
-                                        value=card.id
-                                        ))
+        elements = SlackElementsBuilder()
+        elements.add_button("complete", card.id, "primary")
+        elements.add_button("postpone", card.id)
+
         item = SlackBlockBuilder()
-        item.add_section(task_name, accessory)
+        item.add_section(task_name)
         item.add_context(due_date)
+        item.add_actions(elements.build())
 
         if card.due_date.astimezone().date() < today.date():
             color = "#ff9900"

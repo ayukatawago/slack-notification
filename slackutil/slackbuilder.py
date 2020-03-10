@@ -115,6 +115,23 @@ class SlackElementsBuilder:
         )
         return self
 
+    def add_button(self, text, value, style=None):
+        if style is None:
+            button = dict(
+                type="button",
+                text=dict(type="plain_text", text=text, emoji=True),
+                value=value
+            )
+        else:
+            button = dict(
+                type="button",
+                text=dict(type="plain_text", text=text, emoji=True),
+                value=value,
+                style=style
+            )
+        self.__elements.append(button)
+        return self
+
     def build(self):
         return self.__elements
 
