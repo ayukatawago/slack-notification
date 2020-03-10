@@ -21,10 +21,6 @@ def json_html():
     form_json = json.loads(request.form["payload"])
     print(json.dumps(form_json))
 
-    # complete task on Trello
-    card_id = form_json["actions"][0]["value"]
-    trello_client.complete_card(card_id)
-
     # update message on Slack
     channel_id = form_json["channel"]["id"]
     timestamp = form_json["container"]["message_ts"]
@@ -38,5 +34,13 @@ def json_html():
         blocks[0]["text"]["text"] = "`COMPLETED` " + current_message
 
     slack_client.update_message(channel_id, timestamp, blocks, attachments)
+
+    # complete task on Trello
+    card_id = form_json["actions"][0]["value"]
+    button = form_json["actions"][0]["text"]["text"]
+    if button == "complete":
+        trello_client.complete_card(card_id)
+    elif button == "postpone":
+        trello_client.postpone_card(card_id)
 
     return make_response("", 200)
