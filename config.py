@@ -10,3 +10,4 @@ trello_board = os.environ.get("TRELLO_BOARD")
 
 google_credential = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
 target_calendars = os.environ.get("TARGET_CALENDARS")
+calendar_colors = os.environ.get("CALENDAR_COLORS")
