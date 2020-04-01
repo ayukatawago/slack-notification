@@ -1,10 +1,8 @@
 from datetime import datetime
-from trelloutil.trellowrapper import TrelloApiWrapper
-from slackutil.slackwrapper import SlackApiWrapper
 from slackutil.slackbuilder import SlackBlockBuilder, SlackAttachmentBuilder, SlackElementsBuilder
+from slackutil.slackwrapper import SlackApiWrapper
+from trelloutil.trellowrapper import TrelloApiWrapper
 import config
-
-slack = SlackApiWrapper(config.slack_api_token)
 
 
 def create_trello_block(list_name):
@@ -55,6 +53,7 @@ def get_todo_cards(trello_list):
 
 
 def notify_trello_tasks():
+    slack = SlackApiWrapper(config.slack_api_token)
     # get cards from Trello
     trello = TrelloApiWrapper(config.trello_api_key, config.trello_token)
     trello_board = trello.get_board_by_name(config.trello_board)
@@ -68,11 +67,7 @@ def notify_trello_tasks():
         blocks = create_trello_block(trello_list.name)
         attachments = create_trello_attachments(trello_cards)
         slack.post_attachment_message(
-            channel=config.slack_channel,
+            channel=config.slack_trello_channel,
             blocks=blocks,
             attachments=attachments
         )
-
-
-if __name__ == '__main__':
-    notify_trello_tasks()
