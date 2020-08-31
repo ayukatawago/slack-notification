@@ -1,3 +1,4 @@
+import json
 from dateutil import parser
 from googleutil.google_service import GoogleCalendarService
 from slackutil.slackbuilder import SlackBlockBuilder, SlackAttachmentBuilder
@@ -31,7 +32,12 @@ def create_calendar_attachments(events, color):
 
 def notify_google_calendar():
     slack = SlackApiWrapper(config.slack_api_token)
-    service = GoogleCalendarService()
+    credential = json.loads(config.google_credential)
+    calendar_entry_list = []
+    for calendar_id, color_id in zip(config.target_calendars.split(','), config.calendar_colors.split(',')):
+        calendar_entry_list.append({'id': calendar_id,'color_id': color_id})
+
+    service = GoogleCalendarService(credential, calendar_entry_list)
 
     calendar_lists = service.get_calendar_lists()
 

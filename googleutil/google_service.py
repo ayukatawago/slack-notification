@@ -1,19 +1,18 @@
-import json
 from datetime import datetime
 from dateutil import relativedelta
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
-import config
 
 
 class GoogleCalendarService:
     scopes = ['https://www.googleapis.com/auth/calendar']
 
-    def __init__(self):
+    def __init__(self, credentials, calendar_entry_list):
         self.credentials = service_account.Credentials.from_service_account_info(
-            json.loads(config.google_credential),
+            credentials,
             scopes=self.scopes
         )
+        self.calendar_entry_list = calendar_entry_list
         # https://developers.google.com/calendar/v3/reference
         self.service = build('calendar', 'v3', credentials=self.credentials)
 
@@ -25,12 +24,8 @@ class GoogleCalendarService:
         return calendar_list_entry['items']
 
     def link_service_account(self):
-        for calendar_id, color_id in zip(config.target_calendars.split(','), config.calendar_colors.split(',')):
-            calendar_list_entry = {
-                'id': calendar_id,
-                'color_id': color_id
-            }
-            self.service.calendarList().insert(body=calendar_list_entry).execute()
+        for calendar_entry in self.calendar_list_entry:
+            self.service.calendarList().insert(body=calendar_entry).execute()
 
     def get_events_today(self, calendar_id):
         today_start = datetime.utcnow()
