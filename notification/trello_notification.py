@@ -1,4 +1,5 @@
 from datetime import datetime
+from dateutil import relativedelta
 from slackutil.slackbuilder import SlackBlockBuilder, SlackAttachmentBuilder, SlackElementsBuilder
 from slackutil.slackwrapper import SlackApiWrapper
 from trelloutil.trellowrapper import TrelloApiWrapper
@@ -7,7 +8,7 @@ import config
 
 def create_trello_block(list_name):
     block = SlackBlockBuilder()
-    block.add_section("*Today's task in `{}`*".format(list_name))
+    block.add_section("*Weekly task in `{}`*".format(list_name))
     block.add_divider()
     return block.build()
 
@@ -39,20 +40,23 @@ def create_trello_attachments(cards):
 
 def get_todo_cards(trello_list):
     today = datetime.now()
+    next_week = today + relativedelta.relativedelta(days=7) + relativedelta.relativedelta(minutes=-1)
     trello_cards = list()
     open_cards = trello_list.list_cards("open")
     if len(open_cards) == 0:
         return trello_cards
-
     for card in open_cards:
         if (card.due_date != ''
-                and card.due_date.date() <= today.date()
+                and card.due_date.date() <= next_week.date()
                 and not card.is_due_complete):
             trello_cards.append(card)
     return trello_cards
 
 
 def notify_trello_tasks():
+    weekday = datetime.now().weekday()
+    if weekday != 0:
+        return
     slack = SlackApiWrapper(config.slack_api_token)
     # get cards from Trello
     trello = TrelloApiWrapper(config.trello_api_key, config.trello_token)
