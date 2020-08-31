@@ -50,6 +50,7 @@ def get_todo_cards(trello_list):
                 and card.due_date.date() <= next_week.date()
                 and not card.is_due_complete):
             trello_cards.append(card)
+    trello_cards.sort(key=lambda card: card.due_date)
     return trello_cards
 
 
